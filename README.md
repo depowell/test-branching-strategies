@@ -6,9 +6,9 @@
 - development used as dev branch PRs from feature branches target dev
 - master up to date versions of code
 - release branches (PRs from dev to release target deployment to these branches)
-  - env_test
-  - env_uat
-  - env_prod
+  - `env_test`
+  - `env_uat`
+  - `env_prod`
 
 ## semver
 MAJOR version when you make incompatible API changes
