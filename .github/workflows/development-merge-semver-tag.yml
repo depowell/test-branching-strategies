@@ -29,7 +29,7 @@ jobs:
         id: get_latest_tag
         run: |
           # Get the latest tag or default to v0.0.0 if none
-          LATEST_TAG=$(git describe --tags --abbrev=0 || echo "v0.0.0")
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
           echo "latest_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
 
 #      - name: Bump version based on branch type
