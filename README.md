@@ -1,10 +1,10 @@
 # test-branching-strategies
 
-## branches
+## branching strategy
 - `feat/f-###` feature branches branched from `development` to PR back to `development` once complete
 - `bugfux/b-###` bugfix branches branched from `development` to PR back to `development` once complete
 - `development` used as development branch PRs from feature `feat/` or bugfix `bugfix/` branches target `development`
-- `master` branch holds up to date versions of code?
+- `master` branch holds up to date versions of code from production
 - release branches PRs from `development` to release branches `release/VERSION_TAG` target deployment to these branches:
   - `env_test`
   - `env_uat`
@@ -17,15 +17,19 @@ refer to [semver](https://semver.org/)
 - update PATCH version when you make backward compatible bug fixes and merge changes from `bugfix/*` into `development
 
 ## automation
-- all PRs to dev automatically add version tags to dev using semver based on their type of change
-  - feat/ or features with non breaking changes that are not bug fixes increment MINOR in semver vMAJOR.MINOR.PATCH i.e. v1.0.1 would be incremented to v1.1.0 in PATCH from a feature
-  - bugfix/ bugfix branches increment PATCH version i.e. v1.0.0 >> v1.0.1
-  - features with breaking changes increment MAJOR VERSION i.e. v1.0.1 >> v2.0.0
+- all PRs to `development` automatically add version tags to `development` using semver based on their type of change using [development-merge-semver-tag.yml](.github/workflows/development-merge-semver-tag.yml)
+  - `feat/*` or features with non-breaking changes that are not bug fixes increment MINOR in semver vMAJOR.MINOR.PATCH i.e. `v1.0.1` would be incremented to `v1.1.0` in PATCH from a feature
+  - `bugfix/*` or bugfix branches increment PATCH version i.e. `v1.0.0` > `v1.0.1`
+  - features with breaking changes increment MAJOR VERSION i.e. `v1.0.1` > `v2.0.0`
 
-- once the team is release ready PRs from development automation can release into temporary release branches that push changes up to `env` branches for deployment
-- PRs from `development` to `release` include optional parameters 
+- once the team is ready to release from `development` into an environment automation can release into temporary release branches that push changes up to `env_*` branches for deployment
+- the [workflow](.github/workflows/development-release-to-env.yml) for this is manually triggered
+- when manually triggered the user enters the version number to indicate what should be released i.e. `v1.1.123`
 
-## config
+## config/setup to make workflows behave correctly
 in github settings > actions:
 Choose whether GitHub Actions can create pull requests or submit approving pull request reviews.
 - Allow GitHub Actions to create and approve pull requests >> allow
+
+## todo
+- generate github release pages in the UI based on versions pushed into environments (through automation workflows)
