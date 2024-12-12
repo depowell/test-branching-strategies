@@ -2,10 +2,10 @@
 
 ## branches
 - `feat/f-###` feature branches branched from `development` to PR back to `development` once complete
-- `bugfux/b-###` bugfix branches branched from dev to PR back to dev once complete
-- development used as dev branch PRs from feature branches target dev
-- master up to date versions of code
-- release branches (PRs from dev to release target deployment to these branches)
+- `bugfux/b-###` bugfix branches branched from `development` to PR back to `development` once complete
+- `development` used as development branch PRs from feature `feat/` or bugfix `bugfix/` branches target `development`
+- `master` branch holds up to date versions of code?
+- release branches PRs from `development` to release branches `release/VERSION_TAG` target deployment to these branches:
   - `env_test`
   - `env_uat`
   - `env_prod`
