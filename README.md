@@ -12,9 +12,9 @@
 
 ## semver tagging strategy
 refer to [semver](https://semver.org/)
-update MAJOR version when you make incompatible API changes
-update MINOR version when you add functionality in a backward compatible manner  and merge changes from `feat/*` into `development`
-update PATCH version when you make backward compatible bug fixes and merge changes from `bugfix/*` into `development
+- update MAJOR version when you make incompatible API changes
+- update MINOR version when you add functionality in a backward compatible manner  and merge changes from `feat/*` into `development`
+- update PATCH version when you make backward compatible bug fixes and merge changes from `bugfix/*` into `development
 
 ## automation
 - all PRs to dev automatically add version tags to dev using semver based on their type of change
