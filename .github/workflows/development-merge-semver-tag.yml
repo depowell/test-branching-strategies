@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     if: >
       ${{ github.event.pull_request.merged == true &&
-         (startsWith(github.event.pull_request.head.ref, 'feature/') ||
+         (startsWith(github.event.pull_request.head.ref, 'feat/') ||
           startsWith(github.event.pull_request.head.ref, 'bugfix/')) &&
          github.event.pull_request.base.ref == 'development' }}
     steps:
@@ -33,30 +33,35 @@ jobs:
           echo "latest_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
           # Print latest tag to logging console:
           echo "Latest tag is: $LATEST_TAG"
-#      - name: Bump version based on branch type
-#        id: bump_version
-#        run: |
-#          LATEST_TAG="${{ steps.get_latest_tag.outputs.latest_tag }}"
-#
-#          # Parse the current semver
-#          IFS='.' read -ra VERSION_PARTS <<< "${LATEST_TAG#v}"
-#          MAJOR="${VERSION_PARTS[0]}"
-#          MINOR="${VERSION_PARTS[1]}"
-#          PATCH="${VERSION_PARTS[2]}"
-#
-#          if [[ "${{ github.event.pull_request.head.ref }}" == feature/* ]]; then
-#            # For feature, increment minor and reset patch
-#            MINOR=$((MINOR+1))
-#            PATCH=0
-#          elif [[ "${{ github.event.pull_request.head.ref }}" == bugfix/* ]]; then
-#            # For bugfix, increment patch
-#            PATCH=$((PATCH+1))
-#          fi
-#
-#          NEW_TAG="v${MAJOR}.${MINOR}.${PATCH}"
-#          echo "new_tag=$NEW_TAG" >> $GITHUB_OUTPUT
-#
-#      - name: Create and push new tag
-#        run: |
-#          git tag ${{ steps.bump_version.outputs.new_tag }}
-#          git push origin ${{ steps.bump_version.outputs.new_tag }}
+      - name: Bump version based on branch type
+        id: bump_version
+        run: |
+          LATEST_TAG="${{ steps.get_latest_tag.outputs.latest_tag }}"
+
+          # Parse the current semver
+          IFS='.' read -ra VERSION_PARTS <<< "${LATEST_TAG#v}"
+          MAJOR="${VERSION_PARTS[0]}"
+          MINOR="${VERSION_PARTS[1]}"
+          PATCH="${VERSION_PARTS[2]}"
+
+          if [[ "${{ github.event.pull_request.head.ref }}" == feat/* ]]; then
+            # For feature, increment minor and reset patch
+            echo "PR from feature, incrementing MINOR version"
+            MINOR=$((MINOR+1))
+            PATCH=0
+          elif [[ "${{ github.event.pull_request.head.ref }}" == bugfix/* ]]; then
+            # For bugfix, increment patch
+            echo "PR from feature, incrementing MINOR version"
+            PATCH=$((PATCH+1))
+          fi
+
+          NEW_TAG="v${MAJOR}.${MINOR}.${PATCH}"
+          echo "new_tag=$NEW_TAG" >> $GITHUB_OUTPUT
+          # Print latest tag to logging console:
+          echo "New tag is: $NEW_TAG"
+
+      - name: Create and push new tag
+        run: |
+          git tag ${{ steps.bump_version.outputs.new_tag }}
+          git push origin ${{ steps.bump_version.outputs.new_tag }}
+          echo "development branch tagged with $NEW_TAG"
