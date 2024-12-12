@@ -64,4 +64,4 @@ jobs:
         run: |
           git tag ${{ steps.bump_version.outputs.new_tag }}
           git push origin ${{ steps.bump_version.outputs.new_tag }}
-          echo "development branch tagged with $NEW_TAG"
+          echo "development branch tagged with ${{ steps.bump_version.outputs.new_tag }}"

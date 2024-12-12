@@ -1,0 +1,57 @@
+name: Release to env_test
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "The tag to release"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Ensure we fetch all tags
+
+      - name: Fetch all tags
+        run: git fetch --tags
+
+      - name: Verify tag exists
+        run: |
+          TAG_INPUT="${{ github.event.inputs.tag }}"
+          if ! git rev-parse "refs/tags/$TAG_INPUT" >/dev/null 2>&1; then
+            echo "Tag $TAG_INPUT does not exist."
+            exit 1
+          fi
+
+      - name: Create release branch from the specified tag
+        run: |
+          TAG_INPUT="${{ github.event.inputs.tag }}"
+          # Check out the development branch to ensure a known starting point
+          git checkout development
+          # Reset HEAD to the specified tag
+          git reset --hard "refs/tags/$TAG_INPUT"
+
+          RELEASE_BRANCH="release/$TAG_INPUT"
+          git checkout -b "$RELEASE_BRANCH"
+          git push origin "$RELEASE_BRANCH"
+
+      - name: Create PR into env_test
+        # Use GitHub CLI to open a pull request
+        run: |
+          RELEASE_BRANCH="release/${{ github.event.inputs.tag }}"
+          gh auth login --with-token <<< "${{ secrets.GITHUB_TOKEN }}"
+          gh pr create \
+            --base env_test \
+            --head "$RELEASE_BRANCH" \
+            --title "Release ${{ github.event.inputs.tag }}" \
+            --body "Promoting release ${{ github.event.inputs.tag }} into env_test."
+
