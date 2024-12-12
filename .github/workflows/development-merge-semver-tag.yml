@@ -1,0 +1,61 @@
+name: Semver Tag on Merge to Development
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [development]
+
+permissions:
+  contents: write
+
+jobs:
+  semver_tag:
+    runs-on: ubuntu-latest
+    if: >
+      ${{ github.event.pull_request.merged == true &&
+         (startsWith(github.event.pull_request.head.ref, 'feature/') ||
+          startsWith(github.event.pull_request.head.ref, 'bugfix/')) &&
+         github.event.pull_request.base.ref == 'development' }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch tags
+        run: git fetch --tags
+
+      - name: Get latest tag
+        id: get_latest_tag
+        run: |
+          # Get the latest tag or default to v0.0.0 if none
+          LATEST_TAG=$(git describe --tags --abbrev=0 || echo "v0.0.0")
+          echo "latest_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+
+#      - name: Bump version based on branch type
+#        id: bump_version
+#        run: |
+#          LATEST_TAG="${{ steps.get_latest_tag.outputs.latest_tag }}"
+#
+#          # Parse the current semver
+#          IFS='.' read -ra VERSION_PARTS <<< "${LATEST_TAG#v}"
+#          MAJOR="${VERSION_PARTS[0]}"
+#          MINOR="${VERSION_PARTS[1]}"
+#          PATCH="${VERSION_PARTS[2]}"
+#
+#          if [[ "${{ github.event.pull_request.head.ref }}" == feature/* ]]; then
+#            # For feature, increment minor and reset patch
+#            MINOR=$((MINOR+1))
+#            PATCH=0
+#          elif [[ "${{ github.event.pull_request.head.ref }}" == bugfix/* ]]; then
+#            # For bugfix, increment patch
+#            PATCH=$((PATCH+1))
+#          fi
+#
+#          NEW_TAG="v${MAJOR}.${MINOR}.${PATCH}"
+#          echo "new_tag=$NEW_TAG" >> $GITHUB_OUTPUT
+#
+#      - name: Create and push new tag
+#        run: |
+#          git tag ${{ steps.bump_version.outputs.new_tag }}
+#          git push origin ${{ steps.bump_version.outputs.new_tag }}
