@@ -24,3 +24,8 @@ refer to [semver](https://semver.org/)
 
 - once the team is release ready PRs from development automation can release into temporary release branches that push changes up to `env` branches for deployment
 - PRs from `development` to `release` include optional parameters 
+
+## config
+in github settings > actions:
+Choose whether GitHub Actions can create pull requests or submit approving pull request reviews.
+- Allow GitHub Actions to create and approve pull requests >> allow
