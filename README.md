@@ -1,8 +1,8 @@
 # test-branching-strategies
 
 ## branches
-- feat/f-### feature branches branched from dev to PR back to dev once complete
-- bugfux/b-### bugfix branches branched from dev to PR back to dev once complete
+- `feat/f-###` feature branches branched from `development` to PR back to `development` once complete
+- `bugfux/b-###` bugfix branches branched from dev to PR back to dev once complete
 - development used as dev branch PRs from feature branches target dev
 - master up to date versions of code
 - release branches (PRs from dev to release target deployment to these branches)
